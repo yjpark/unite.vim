@@ -205,7 +205,10 @@ function! s:make_abbr(bufnr, flags) "{{{
          \ unite#util#substitute_path_separator(path) . ' '
 endfunction"}}}
 function! s:compare(candidate_a, candidate_b) "{{{
-  return a:candidate_b.source__time - a:candidate_a.source__time
+  "yjpark {{{
+  "return a:candidate_b.source__time - a:candidate_a.source__time
+  return a:candidate_b.action__buffer_nr - a:candidate_a.action__buffer_nr
+  "yjpark }}}
 endfunction"}}}
 function! s:get_buffer_list(is_bang, is_question, is_plus, is_minus) "{{{
   " Get :ls flags.
@@ -224,7 +227,7 @@ function! s:get_buffer_list(is_bang, is_question, is_plus, is_minus) "{{{
   let buffer_list = unite#sources#buffer#variables#get_buffer_list()
   while bufnr <= bufnr('$')
     if s:is_listed(a:is_bang, a:is_question, a:is_plus, a:is_minus, bufnr)
-          \ && bufnr != bufnr('%')
+      "yjpark    \ && bufnr != bufnr('%')
       let dict = get(buffer_list, bufnr, {
             \ 'action__buffer_nr' : bufnr,
             \ 'source__time' : 0,
@@ -237,6 +240,10 @@ function! s:get_buffer_list(is_bang, is_question, is_plus, is_minus) "{{{
   endwhile
 
   call sort(list, 's:compare')
+
+  "yjpark {{{
+  return list
+  "yjpark }}}
 
   if s:is_listed(a:is_bang, a:is_question, a:is_plus, a:is_minus, bufnr('%'))
     " Add current buffer.
